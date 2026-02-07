@@ -37,7 +37,104 @@ Format the partitions like this:
 
 Identify and mount the ext4 block device to a mountpoint such as `sudo mount /dev/sdb3 /mnt/archpower`.
 
-Get the pacman.conf file here to your disk: https://cdn.discordapp.com/attachments/1415992252940947509/1450595617146408960/pacman.conf?ex=694861f1&is=69471071&hm=aed030ad30d16ea88d06252ca3815398938a69ce8d1ad23debfdbe8aefb0805c&
+Get the pacman.conf file here to your disk: 
+```
+#
+# /etc/pacman.conf
+#
+# See the pacman.conf(5) manpage for option and repository directives
+
+#
+# GENERAL OPTIONS
+#
+[options]
+# The following paths are commented out with their default values listed.
+# If you wish to use different paths, uncomment and update the paths.
+#RootDir     = /
+#DBPath      = /var/lib/pacman/
+#CacheDir    = /var/cache/pacman/pkg/
+#LogFile     = /var/log/pacman.log
+#GPGDir      = /etc/pacman.d/gnupg/
+#HookDir     = /etc/pacman.d/hooks/
+HoldPkg     = pacman glibc
+#XferCommand = /usr/bin/curl -L -C - -f -o %o %u
+#XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u
+#CleanMethod = KeepInstalled
+Architecture = powerpc
+
+# Pacman won't upgrade packages listed in IgnorePkg and members of IgnoreGroup
+#IgnorePkg   =
+#IgnoreGroup =
+
+#NoUpgrade   =
+#NoExtract   =
+
+# Misc options
+#UseSyslog
+Color
+#NoProgressBar
+CheckSpace
+#VerbosePkgLists
+ParallelDownloads = 5
+DisableDownloadTimeout
+
+# By default, pacman accepts packages signed by keys that its local keyring
+# trusts (see pacman-key and its man page), as well as unsigned packages.
+SigLevel    = Required DatabaseOptional Never
+LocalFileSigLevel = Optional
+#RemoteFileSigLevel = Required
+
+# NOTE: You must run `pacman-key --init` before first using pacman; the local
+# keyring can then be populated with the keys of all official Arch Linux
+# packagers with `pacman-key --populate archlinux`.
+
+#
+# REPOSITORIES
+#   - can be defined here or included from another file
+#   - pacman will search repositories in the order defined here
+#   - local/custom mirrors can be added here or in separate files
+#   - repositories listed first will take precedence when packages
+#     have identical names, regardless of version number
+#   - URLs will have $repo replaced by the name of the current repo
+#   - URLs will have $arch replaced by the name of the architecture
+#
+# Repository entries are of the format:
+#       [repo-name]
+#       Server = ServerName
+#       Include = IncludePath
+#
+# The header [repo-name] is crucial - it must be present and
+# uncommented to enable the repo.
+#
+
+# The testing repositories are disabled by default. To enable, uncomment the
+# repo name header and Include lines. You can add preferred servers immediately
+# after the header, and they will be used before the default mirrors.
+
+#[testing-any]
+#Server = https://repo.archlinuxpower.org/testing/any
+
+#[testing]
+#Server = https://repo.archlinuxpower.org/testing/$arch
+
+[base-any]
+Server = https://repo.archlinuxpower.org/base/any
+
+[base]
+Server = https://repo.archlinuxpower.org/base/$arch
+
+[extra-any]
+Server = https://repo.wii-linux.org/arch/extra/any
+
+[extra]
+Server = https://repo.wii-linux.org/arch/extra/$arch
+
+# An example of a custom package repository.  See the pacman manpage for
+# tips on creating your own repositories.
+#[custom]
+#SigLevel = Optional TrustAll
+#Server = file:///home/custompkgs
+```
 
 Follow these steps to install ARCHPower to the external disk that will be booted by the 360. These steps assume Arch Linux is being used as the host operating system or otherwise your environemnt is set up to bootstrap Arch Linux.
 1. `pacstrap -KMC /PATH/TO/PACMAN.CONF /PATH/TO/TARGET_DISK_PARTITION base archpower-keyring linux-xenon networkmanager vim nano less wget openssh`
