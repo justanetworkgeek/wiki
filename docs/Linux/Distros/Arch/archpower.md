@@ -4,6 +4,16 @@ TechFlash has packaged the Xenon Linux kernel into ARCHPower in 2025. This guide
 
 ## Prerequisites
 
+You must have binfmt set up on your host system. If your host system is Arch Linux:
+```
+pacman -Sy --needed arch-install-scripts qemu-user-static qemu-user-static-binfmt dosfstools util-linux e2fsprogs
+systemctl restart systemd-binfmt
+```
+If you are not using Arch Linux as a host machine then you will need to identify which packages are required on your system.
+
+
+
+
 ### Xenon Linux Loader (XeLL / Bootloader)
 
 XeLL as the bootloader must be updated. The v0.993 release from years ago was built with the original toolchain and is
@@ -36,6 +46,7 @@ Format the partitions like this:
 3. Final partition is ext4
 
 Identify and mount the ext4 block device to a mountpoint such as `sudo mount /dev/sdb3 /mnt/archpower`.
+You will also want to identify the PARTUUID of your root partition: `blkid -s PARTUUID -o value "/dev/sdb3"` -> save this to a file for later.
 
 Get the pacman.conf file here to your disk: 
 ```
@@ -137,7 +148,7 @@ Server = https://repo.wii-linux.org/arch/extra/$arch
 ```
 
 Follow these steps to install ARCHPower to the external disk that will be booted by the 360. These steps assume Arch Linux is being used as the host operating system or otherwise your environemnt is set up to bootstrap Arch Linux.
-1. `pacstrap -KMC /PATH/TO/PACMAN.CONF /PATH/TO/TARGET_DISK_PARTITION base archpower-keyring linux-xenon networkmanager vim nano less wget openssh`
+1. `pacstrap -KMPC /PATH/TO/PACMAN.CONF /PATH/TO/TARGET_DISK_PARTITION base archpower-keyring linux-xenon networkmanager vim nano less wget openssh`
 2. `arch-chroot /PATH/TO/TARGET_DISK_PARTITION`
 3. `pacman-key --init`
 4. `pacman-key`
@@ -164,7 +175,7 @@ timeout=100        ; In seconds
 speedup=1          ; Full speed CPU
 linux_hdd="uda1:/vmlinuz-linux-xenon root=/dev/sda1 rw console=tty0 console=ttyS0,115200n8 panic=60 coherent_pool=16M" ; Linux kernel entry
 ```
-**NOTE**: the final line will take some tuning unless you supply `root=PARTUUID=partuuid-02` as an example to definitively boot the detected device with this UUID. Identify the PARTUUID of your boot disk (NOT the filesystem UUID) using the `mount` command while the 360 boot drive is still plugged into the host OS. Otherwise if you are using the 360 SATA bay it is pretty good about being `sda`, but each *hard* power cycle of the 360 may vary.
+**NOTE**: the final line will take some tuning unless you supply `root=PARTUUID=partuuid-02` as an example to definitively boot the detected device with this UUID. Identify the PARTUUID of your boot disk (NOT the filesystem UUID) using the `mount` command while the 360 boot drive is still plugged into the host OS. Otherwise if you are using the 360 SATA bay it is pretty good about being `sda`, but each *hard* power cycle of the 360 may vary. Or, `blkid -s PARTUUID -o value "/dev/sdb3"` while your boot disk is plugged into your host machine still.
 
 Boot your console to XeLL via any means available and enjoy ARCHPower! The rest of normal Arch Linux system setup and config can take place on the console itself with an attached keyboard.
 
